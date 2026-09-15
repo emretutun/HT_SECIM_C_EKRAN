@@ -1,0 +1,158 @@
+//-------------------------------------------------------------
+//  C EKRANI CALISMA AYARLARI  (varsayilanlar)
+//
+//  Bu dosya ELLE duzenlenir, uygulama buraya hic yazmaz.
+//  Operatorun arayuzde yaptigi degisiklikler "son_ayar" dosyasina
+//  yazilir ve acilista BU DOSYANIN UZERINE okunur.
+//
+//  Yani burasi "yayin nasil baslasin" dosyasidir.
+//
+//  DIKKAT: satirlar "=" ile bolunur, deger icinde "=" kullanma.
+//-------------------------------------------------------------
+
+
+//=============================================================
+//  UST SERIT
+//=============================================================
+
+UST_AKTIF = 1
+
+//  Sayfa sureleri, saniye. 3 saniyenin altina inilmez: sahnenin
+//  giris animasyonu bitmeden sayfa degisirse yazi okunamaz.
+
+UST_SURE_1 = 3
+UST_SURE_2 = 5
+
+//  Siralamanin ilk diliminin disinda kalan partiler de gosterilsin mi.
+//  Kapatilirsa yalnizca ilk sayfa doner.
+
+UST_IKINCI_SAYFA = 1
+
+//  Son satir kalan partileri toplayip "DİĞER" olarak yazsin mi.
+
+UST_DIGER = 1
+
+//  UST_MOD
+//    OY_ORANI    -> UST_3, alti satir, yalnizca oy orani
+//    MV_VE_ORAN  -> UST_4, bes satir, oran ve vekil birlikte
+
+UST_MOD = OY_ORANI
+
+//-------------------------------------------------------------
+//  UST_BASLIK
+//
+//  Baslik satirindaki kutuda ne gorunecek:
+//
+//    ACILAN_SANDIK / KATILIM / YOK
+//
+//  SAHNEDE IKISI AYNI YERDE DURUYOR. Ikisi birden acilirsa yazilar
+//  ust uste biner, o yuzden secim tek: ya biri ya digeri.
+//-------------------------------------------------------------
+
+UST_BASLIK = ACILAN_SANDIK
+
+//  Ayrica vekil sayfalari da donsun mu (UST_3 sayfa 3-4).
+//  Yukaridaki moddan bagimsizdir, ikisi birlikte kullanilabilir.
+
+UST_MV_SAYISI = 0
+
+//-------------------------------------------------------------
+//  ITTIFAK SAYFALARI
+//
+//  ITTIFAK_MOD
+//    ILK_2     -> UST_5 sayfa 1        (ilk iki ittifak)
+//    2_ARTI_2  -> UST_5 sayfa 1 ve 2   (1-2, sonra 3-4)
+//    ILK_3     -> UST_6 sayfa 1        (ilk uc ittifak)
+//    2_ARTI_3  -> UST_5 sayfa 1, sonra UST_6 sayfa 1
+//-------------------------------------------------------------
+
+ITTIFAK_AKTIF = 1
+ITTIFAK_MOD   = 2_ARTI_3
+
+//  UST_3 / UST_4 basligindaki kaynak yazisi gorunsun mu.
+
+KAYNAK_GOSTER = 0
+KAYNAK_AD     = ANADOLU AJANSI
+
+
+//=============================================================
+//  SOL SERIT
+//
+//  Sol serit HER ZAMAN Turkiye genelini gosterir; alt ve ust
+//  iller arasinda donerken solda genel tablo sabit kalir.
+//=============================================================
+
+SOL_AKTIF = 1
+
+//  SOL_MOD
+//    ILK_2_ADAY -> SOL_1 sayfa 2        (yalnizca lider ikili)
+//    ILK_3_ADAY -> SOL_2 sayfa 1        (uc aday yan yana)
+//    2_ARTI_2   -> SOL_1 sayfa 1 ve 2   (once 3.-4. aday, sonra lider ikili)
+
+SOL_MOD = 2_ARTI_2
+
+SOL_SURE_1 = 10
+SOL_SURE_2 = 5
+
+
+//=============================================================
+//  ALT SERIT
+//=============================================================
+
+ALT_AKTIF = 1
+ALT_SURE  = 5
+
+
+//=============================================================
+//  GENEL
+//=============================================================
+
+//  Oran tek ondalik hane yerine iki hane yazilsin mi.
+//  0 -> %52,4      1 -> %52,43
+
+CIFT_HANE = 0
+
+//  Acilan sandik orani yazilsin mi.
+
+ACILAN_SANDIK = 1
+
+//-------------------------------------------------------------
+//  YASAK_MODU
+//
+//  Secim yasagi suresince aday ve parti adlari ile butun oranlar
+//  BOS birakilir; sahne ekranda kalir ama sayi gostermez.
+//  Acilan sandik orani yukaridaki ayri secenekle yonetilir.
+//
+//  Uygulama bu satiri son_ayar'a YAZMAZ: yasak bir gunluk bir
+//  durumdur, ertesi gun kendiliginden geri gelmesi istenmez.
+//-------------------------------------------------------------
+
+YASAK_MODU = 0
+
+//  Hangi secim veri setleri kullanilacak. Bos birakilirsa arayuzdeki
+//  listelerden secilir; API'deki en yeni CB ve MV secimi one gelir.
+
+SECIM_CB =
+SECIM_MV =
+
+//-------------------------------------------------------------
+//  OTOMATIK_BASLA
+//
+//  1 yapilirsa uygulama baglanip sahneyi okur okumaz donmeye baslar.
+//  Yayin makinesinde 0 birakin: sahne zaten ekranda, uygulama acilir
+//  acilmaz goruntuye mudahale etmesin.
+//-------------------------------------------------------------
+
+OTOMATIK_BASLA = 0
+
+//-------------------------------------------------------------
+//  ACTIVE_YONET
+//
+//  Serit koklerinin (ALT / UST / SOL) ve duzen container'larinin
+//  (UST_3..UST_6, SOL_1, SOL_2) ACTIVE bayragini uygulama yonetsin mi.
+//
+//  Sayfa container'larina DOKUNULMAZ; onlari sahnenin kendi
+//  director'leri aciyor.
+//-------------------------------------------------------------
+
+ACTIVE_YONET = 1

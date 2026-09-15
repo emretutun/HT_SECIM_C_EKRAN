@@ -1,0 +1,56 @@
+//-------------------------------------------------------------
+//  ISIM PLAKALARI
+//
+//  Ittifak ve aday satirlarindaki renkli zemin, boyanabilen bir
+//  materyal DEGIL: sahnede hazir bir gorsel. O yuzden renk vermek
+//  yerine dogru gorseli giydirmek gerekiyor.
+//
+//  Havuzdaki gorseller bu is icin zaten hazirlanmis:
+//     UST_CUMHUR_ISIM_BACK   (sari)      UST_MILLET_ISIM_BACK  (kirmizi)
+//     UST_ATA_ISIM_BACK                  UST_EMEK_ISIM_BACK
+//     UST_DIGER_ISIM_BACK    (gri, taninmayan ittifak icin)
+//
+//  UST_6 (uc satirlik duzen) normal plakayi, UST_5 (iki satirlik
+//  duzen) "2LI_ICIN" plakasini kullaniyor - ikisinin oranlari farkli.
+//
+//  YENI ITTIFAK / YENI ADAY ICIN: Artist'te gorseli havuza koyup
+//  buraya bir satir eklemek yeterli, uygulamayi derlemek gerekmiyor.
+//-------------------------------------------------------------
+
+//  Gorsel adlarinin onune eklenen klasorler.
+
+UST_KLASOR = HT_SECIM/C_EKRAN/UST_MALZEMELER
+SOL_KLASOR = HT_SECIM/C_EKRAN/SOL_MALZEMELER
+
+//-------------------------------------------------------------
+//  ITTIFAK = <kod> = <UST_6 gorseli> = <UST_5 gorseli>
+//
+//  Kodlar API'deki ittifak kodlaridir.
+//  "*" satiri, listede olmayan ittifaklar icin kullanilir.
+//-------------------------------------------------------------
+
+ITTIFAK = CUMHUR = UST_CUMHUR_ISIM_BACK = UST_CUMHUR_ISIM_2LI_ICIN_BACK
+ITTIFAK = MILLET = UST_MILLET_ISIM_BACK = UST_MILLET_ISIM_2LI_ICIN_BACK
+ITTIFAK = ATA    = UST_ATA_ISIM_BACK    = UST_ATA_ISIM_2LI_ICIN_BACK
+ITTIFAK = EMEK   = UST_EMEK_ISIM_BACK   = UST_EMEK_ISIM_2LI_ICIN_BACK
+ITTIFAK = *      = UST_DIGER_ISIM_BACK  = UST_DIGER_ISIM_2LI_ICIN_BACK
+
+//  Havuzda hazir duran ama 2023'te kullanilmayan bir plaka:
+//  ITTIFAK = GUC_BIRLIGI = UST_GUC_BIRLIGI_ISIM_BACK = UST_GUC_BIRLIGI_ISIM_2LI_ICIN_BACK
+
+//-------------------------------------------------------------
+//  ADAY = <kod> = <sol serit isim plakasi>
+//
+//  Aday plakalarinin adlari havuzda duzenli degil (SOL_KK ama
+//  SOL_M_INCE gibi), o yuzden tek tek yaziliyor.
+//-------------------------------------------------------------
+
+ADAY = RTE = SOL_RTE_ISIM_BACK
+ADAY = KK  = SOL_KK_ISIM_BACK
+ADAY = MA  = SOL_MA_ISIM_BACK
+ADAY = MI  = SOL_M_INCE_ISIM_BACK
+ADAY = SO  = SOL_S_OGAN_ISIM_BACK
+ADAY = *   = SOL_CB_ADAY_BACK
+
+//  Havuzda bir de "SOL_SECIM_YASAK" plakasi var; yasak modunda
+//  aday plakasi yerine onu giydirmek isterseniz soyleyin, baglarim.

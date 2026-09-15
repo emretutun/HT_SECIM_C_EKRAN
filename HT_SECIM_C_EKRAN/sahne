@@ -1,0 +1,31 @@
+//-------------------------------------------------------------
+//  C EKRANI - SAHNE VE KATMAN
+//
+//  Bu ekran 24 saat yayinda kaliyor: sahne bir kere yuklenip
+//  bir daha dusurulmuyor. Reji uygulamasindaki HAZIRLA / VER / AL
+//  akisi burada yok.
+//
+//  DIKKAT: satirlar "=" ile bolunur, deger icinde "=" kullanma.
+//-------------------------------------------------------------
+
+//  Sahnelerin yuklendigi katman.
+//  Alternatifler: RENDERER*FRONT_LAYER   RENDERER*BACK_LAYER
+
+LAYER = RENDERER*MAIN_LAYER
+
+//  Viz havuzundaki tam yol.
+
+SAHNE = /HT_SECIM/C_EKRAN/HT_SECIM_2023_C_EKRAN_ALT_CB_3_LU
+
+//-------------------------------------------------------------
+//  YUKLEME
+//
+//  OTOMATIK_YUKLE = 1  -> baglanti kurulunca sahne motora yuklenir
+//  OTOMATIK_YUKLE = 0  -> sahne zaten yayindadir, uygulama yalnizca
+//                         uzerine yazar (yayin sirasinda guvenli olan bu)
+//
+//  Sahne zaten ekranda dururken yeniden yuklemek goruntuyu sifirlar.
+//  Yayin makinesinde 0 birakilmali.
+//-------------------------------------------------------------
+
+OTOMATIK_YUKLE = 0

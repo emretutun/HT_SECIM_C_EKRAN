@@ -1,0 +1,30 @@
+//-------------------------------------------------------------
+//  IL ADI KISALTMALARI
+//
+//  Sahnedeki baslik kutulari sabit genislikte ve Viz yaziyi
+//  kendiliginden kucultmuyor. Iki kademeli cozum var:
+//
+//    1. Burada kisa karsiligi yazili iller kisa adiyla gosterilir.
+//    2. Kisa ad da sigmiyorsa uygulama yaziyi yatayda oranla
+//       SIKISTIRIR - hicbir ad kutudan tasmaz.
+//
+//  Yani bu dosya zorunlu degil; yalnizca "sikisik gorunmesin,
+//  kisaltilsin" dedigin iller icin.
+//
+//  Satir duzeni:   <plaka> = <ekranda gorunecek ad>
+//
+//  Kisaltma BUTUN seritlerde gecerli - ayni il alt seritte
+//  "KAHRAMANMARAŞ", ust seritte "K.MARAŞ" gorunmesin diye.
+//
+//  Plaka 0 = Turkiye geneli, 900 = yurtdisi, 901 = gumruk.
+//-------------------------------------------------------------
+
+46 = K.MARAŞ
+63 = Ş.URFA
+
+//  En dar kutu ittifak sayfalarinin basligi: orada yaklasik 10
+//  harf sigiyor. "TÜRKİYE GENELİ" 14 harf, biraz sikisiyor.
+//  Kisa yazilmasini istersen asagidaki satirin basindaki // isaretini
+//  kaldir; o zaman butun seritlerde "TÜRKİYE" yazar.
+
+// 0 = TÜRKİYE

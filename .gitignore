@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# NuGet - packages.config ile geliyor, paketin kendisi depoya girmiyor
+packages/
+
+# Uygulamanin kendi yazdigi dosyalar
+LOG/
+son_ayar
+veri_cache.json
+veri_cache.json.tmp

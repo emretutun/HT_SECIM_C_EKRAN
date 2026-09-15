@@ -1,0 +1,42 @@
+//-------------------------------------------------------------
+//  IL GRUPLARI
+//
+//  Alt ve ust seritlerin dolasacagi il listeleri.
+//
+//  Satir duzeni:
+//
+//      GRUP = <grup adi> = <kota> = <plakalar, virgulle>
+//
+//  KOTA: o gruptan arka arkaya kac il gosterilip sonraki gruba
+//  gecilecegi. Ornek: ILLER 5, BUYUK SEHIRLER 2 ise once sirasi
+//  gelmis 5 il, sonra 2 buyuksehir, sonra tekrar 5 il...
+//
+//  Her grup KENDI kaldigi yerden devam eder; gruba geri donuldugunde
+//  bastan baslamaz. Boylece 81 il sirayla gecerken arada duzenli
+//  olarak buyuksehirler ve afet illeri de ekrana gelir.
+//
+//  KOTASI 0 OLAN GRUP DONUSE HIC GIRMEZ.
+//
+//  Plaka 0   = Turkiye geneli
+//  Plaka 900 = yurtdisi        901 = gumruk
+//
+//  Kotalari ve hangi ilin yayina kapali oldugunu arayuzden de
+//  degistirebilirsiniz; uygulama bunlari son_ayar dosyasina yazar
+//  ve bu dosyanin uzerine okur.
+//-------------------------------------------------------------
+
+GRUP = İLLER = 5 = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81
+
+//  Buyuksehir belediyesi olan 30 il.
+
+GRUP = BÜYÜK ŞEHİRLER = 2 = 1,6,7,9,10,16,20,21,25,26,27,31,33,34,35,38,41,42,44,45,46,48,52,55,59,61,63,65,72,77
+
+//  6 Subat 2023 depreminde OHAL ilan edilen 11 il.
+
+GRUP = AFET BÖLGELERİ = 0 = 1,2,21,23,27,31,44,46,63,79,80
+
+//  Turkiye geneli, yurtdisi ve gumruk. Eski ekrandaki "DIGER BOLGELER"
+//  listesinde secim bolgeleri de vardi (Istanbul 1-2-3 gibi); API su an
+//  bolge kirilimi vermiyor, o satirlar veri gelince eklenecek.
+
+GRUP = DİĞER = 1 = 0,900,901
