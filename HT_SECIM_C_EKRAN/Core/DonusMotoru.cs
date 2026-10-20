@@ -77,6 +77,10 @@ namespace HT_SECIM_C_EKRAN.Core
         /// </summary>
         public void SayfalariKur()
         {
+            // Seritlerin yeniden baslatilmasi gerekip gerekmedigi asagida
+            // belli olacak; listeler bosalmadan once bakiliyor.
+            bool yayindaydi = Yayinda;
+
             alt.Sayfalar.Clear();
             ust.Sayfalar.Clear();
             sol.Sayfalar.Clear();
@@ -93,6 +97,42 @@ namespace HT_SECIM_C_EKRAN.Core
             CLog.Detail("SAYFA LISTELERI",
                 "ALT " + alt.Sayfalar.Count + " / ÜST " + ust.Sayfalar.Count +
                 " / SOL " + sol.Sayfalar.Count);
+
+            SeritleriEsitle(yayindaydi);
+        }
+
+        /// <summary>
+        /// Serit listelerini yayin durumuyla esitler.
+        ///
+        /// Operator yayin sirasinda bir seridin AKTİF kutusunu kapatinca o
+        /// seridin sayfa listesi bosaliyor. Yalnizca zamanlayiciyi durdurmak
+        /// yetmez: serit ekranda son sayfasiyla DONMUS halde kalir. Kok
+        /// container'in da kapatilmasi gerekiyor - Durdur() bunu yapiyor.
+        ///
+        /// Tersi de gecerli: yayin surerken kutu tekrar isaretlenirse serit
+        /// ekrana geri geliyor, operatorun VER'e basmasi gerekmiyor.
+        /// </summary>
+        private void SeritleriEsitle(bool yayindaydi)
+        {
+            foreach (Serit s in Seritler)
+            {
+                if (s.Sayfalar.Count == 0)
+                {
+                    if (s.Donuyor)
+                    {
+                        CLog.Log("SERIT KAPATILDI", s.Ad + " - AKTİF kutusu kapalı");
+                        s.Durdur();
+                    }
+
+                    continue;
+                }
+
+                if (yayindaydi && !s.Donuyor)
+                {
+                    CLog.Log("SERIT ACILDI", s.Ad + " - AKTİF kutusu işaretlendi");
+                    s.Baslat();
+                }
+            }
         }
 
         private void UstSayfalari()
@@ -184,7 +224,10 @@ namespace HT_SECIM_C_EKRAN.Core
             IlGruplari.Basa();
             IlBasa();
 
-            foreach (Serit s in Seritler) s.Hazirla();
+            // AKTİF kutusu kapali seritler atlaniyor; bos liste icin
+            // "hazirlanamadi" hatasi yazmanin anlami yok.
+            foreach (Serit s in Seritler)
+                if (s.Sayfalar.Count > 0) s.Hazirla();
         }
 
         /// <summary> VER: seritleri ekrana verir ve donusu baslatir. </summary>
@@ -204,9 +247,22 @@ namespace HT_SECIM_C_EKRAN.Core
                 IlBasa();
             }
 
-            foreach (Serit s in Seritler) s.Baslat();
+            // AKTİF kutusu kapali serit ekrana verilmiyor.
+            foreach (Serit s in Seritler)
+                if (s.Sayfalar.Count > 0) s.Baslat();
 
-            CLog.Log("YAYINA VERILDI", "ALT/ÜST/SOL");
+            CLog.Log("YAYINA VERILDI", Verilenler());
+        }
+
+        /// <summary> Ekrana verilen seritlerin adlari; log icin. </summary>
+        private string Verilenler()
+        {
+            string sonuc = "";
+
+            foreach (Serit s in Seritler)
+                if (s.Donuyor) sonuc += (sonuc.Length > 0 ? "/" : "") + s.Ad;
+
+            return sonuc.Length > 0 ? sonuc : "hiçbir şerit aktif değil";
         }
 
         /// <summary> AL: seritleri ekrandan cikarir ve donusu durdurur. </summary>

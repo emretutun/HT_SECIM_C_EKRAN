@@ -135,14 +135,35 @@ namespace HT_SECIM_C_EKRAN.Core
         // --------------------------------------------- baslik kutu gruplari
 
         /// <summary>
-        /// Alt seritteki acilan sandik kutusu. Adi iki sayfada da "ASS",
-        /// o yuzden sayisal yol.
+        /// Alt seritte acilan sandik gizlenirken kapatilacak container'lar.
+        ///
+        /// SAHNE TUZAGI: sayfa 1'de IL ADI acilan sandikla AYNI GRUBUN
+        /// icinde duruyor (2/3/2/1/4/1):
+        ///
+        ///     2/3/2/1/4/1        ASS
+        ///     2/3/2/1/4/1/1      ilback              (mavi zemin)
+        ///     2/3/2/1/4/1/2/1    ALT_1_SAYFA1_IL_AD  (sehir adi)
+        ///     2/3/2/1/4/1/2/2    ACILAN_SANDIK_YAZI  (etiket)
+        ///     2/3/2/1/4/1/3      ASS_SATIR1          (sayilar)
+        ///
+        /// Grubun tamami kapatilirsa sehir adi da kayboluyor. O yuzden
+        /// yalnizca etiket ve sayi satiri kapatiliyor.
+        ///
+        /// Sayfa 2'de il adi yok, orada grubun tamami kapatilabiliyor -
+        /// yoksa uzerinde hicbir sey olmayan bos bir zemin kalirdi.
         /// </summary>
-        public static string AltAssGrubu(int sayfa)
+        public static string[] AltAssGizlenecekler(int sayfa)
         {
-            if (sayfa == 1) return "2/3/2/1/4/1";
-            if (sayfa == 2) return "2/3/3/1/2";
-            return null;
+            if (sayfa == 1) return new string[] { "2/3/2/1/4/1/2/2", "2/3/2/1/4/1/3" };
+            if (sayfa == 2) return new string[] { "2/3/3/1/2" };
+
+            return new string[0];
         }
+
+        /// <summary>
+        /// Sayfa 1'in baslik grubu. Acilan sandik gizlense de ACIK kalmali:
+        /// sehir adi bunun icinde.
+        /// </summary>
+        public const string ALT_BASLIK_GRUBU = "2/3/2/1/4/1";
     }
 }

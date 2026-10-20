@@ -81,7 +81,27 @@ her il için önce adaylar, sonra partiler görünür, sonra sıradaki il.
 1. `HT_SECIM_C_EKRAN.slnx` dosyasını aç, derle.
 2. `bin\Debug` altındaki ayar dosyalarını kendi ortamına göre düzenle
    (aşağıdaki tabloya bak).
-3. Uygulamayı çalıştır → **BAĞLAN** → **SAHNEYİ OKU** → **VER**.
+3. Uygulamayı çalıştır ve sırayla:
+
+```
+BAĞLAN  ->  SAHNEYİ VER  ->  SAHNEYİ OKU  ->  HAZIRLA  ->  VER
+```
+
+| Adım | Ne yapar |
+|---|---|
+| **BAĞLAN** | Yalnızca engine'e bağlanır, sahneye dokunmaz |
+| **SAHNEYİ VER** | Sahneyi `FRONT_LAYER`'a yükler |
+| **SAHNEYİ OKU** | Stage'i okur, director id'lerini çıkarır |
+| **HAZIRLA** | Sayfa değerlerini yazar, director'ü tetiklemez |
+| **VER** | Şeritleri ekrana verir, dönüş otomasyonu başlar |
+
+> **Sahneyi yüklemek onu tasarım haline döndürür** — director id'leri değişir,
+> yazılmış bütün değerler silinir. SAHNEYİ VER'den sonra SAHNEYİ OKU şarttır;
+> uygulama yükleme anında indeksi geçersiz sayar ve düğmeler buna göre kilitlenir.
+
+**Katman ayrımı:** C ekranı `RENDERER*FRONT_LAYER`, reji uygulaması
+`RENDERER*MAIN_LAYER` kullanır. Bir katmanda aynı anda tek sahne durabildiği için
+ikisi aynı katmanda olsaydı biri diğerini motordan düşürürdü.
 
 > **Viz Artist açıkken hiçbir SET komutu çalışmaz.** Engine
 > `the command is not allowed in this mode` döndürür. Test etmeden önce Artist'i kapat.
@@ -115,6 +135,11 @@ dosyanın üzerine okunur. Yani `donus`, "yayın nasıl başlasın" dosyasıdır
 **Yasak modu kasıtlı olarak `son_ayar`'a yazılmaz.** Yasak bir günlük bir durumdur;
 ertesi gün uygulama açıldığında kendiliğinden geri gelmesi kimsenin beklemediği
 bir şey olurdu.
+
+> Arayüz beklenmedik değerlerle açılıyorsa (süreler yanlış, il kutuları kapalı
+> geliyor) `son_ayar` dosyasını silin. Uygulama `donus` ve `iller` dosyalarındaki
+> varsayılanlara döner. `son_ayar` bu iki dosyanın **üzerine** okunduğu için, bir
+> kere bozulursa kendini besleyip durur.
 
 ### İl grupları
 

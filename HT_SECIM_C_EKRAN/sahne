@@ -1,31 +1,52 @@
 //-------------------------------------------------------------
-//  C EKRANI - SAHNE VE KATMAN
-//
-//  Bu ekran 24 saat yayinda kaliyor: sahne bir kere yuklenip
-//  bir daha dusurulmuyor. Reji uygulamasindaki HAZIRLA / VER / AL
-//  akisi burada yok.
+//  SAHNE AYARLARI
 //
 //  DIKKAT: satirlar "=" ile bolunur, deger icinde "=" kullanma.
 //-------------------------------------------------------------
 
-//  Sahnelerin yuklendigi katman.
-//  Alternatifler: RENDERER*FRONT_LAYER   RENDERER*BACK_LAYER
+//-------------------------------------------------------------
+//  LAYER
+//
+//  C ekrani FRONT katmanina yukleniyor, reji uygulamasi ise
+//  MAIN katmanina. Ikisi ayni motorda calisiyor; ayni katmana
+//  yuklenselerdi biri digerini motordan dusururdu - bir katmanda
+//  ayni anda tek sahne durabiliyor.
+//
+//  Katman sirasi (onden arkaya): FRONT_LAYER, MAIN_LAYER, BACK_LAYER
+//  C ekrani surekli ustte duran bir serit oldugu icin FRONT dogru yer.
+//
+//  Alternatifler: RENDERER*MAIN_LAYER   RENDERER*BACK_LAYER
+//-------------------------------------------------------------
 
-LAYER = RENDERER*MAIN_LAYER
+LAYER = RENDERER*FRONT_LAYER
 
-//  Viz havuzundaki tam yol.
+//  Viz havuzundaki tam sahne yolu.
 
 SAHNE = /HT_SECIM/C_EKRAN/HT_SECIM_2023_C_EKRAN_ALT_CB_3_LU
 
 //-------------------------------------------------------------
-//  YUKLEME
+//  YUKLEME  -  baglanti kurulunca sahne KENDILIGINDEN yuklensin mi
 //
-//  OTOMATIK_YUKLE = 1  -> baglanti kurulunca sahne motora yuklenir
-//  OTOMATIK_YUKLE = 0  -> sahne zaten yayindadir, uygulama yalnizca
-//                         uzerine yazar (yayin sirasinda guvenli olan bu)
+//    ELLE    : yuklenmez, operator SAHNEYİ VER'e basar.  (onerilen)
+//    BOSSA   : katman bossa yuklenir, doluysa dokunulmaz.
+//    HER     : her baglantida yeniden yuklenir.
 //
-//  Sahne zaten ekranda dururken yeniden yuklemek goruntuyu sifirlar.
-//  Yayin makinesinde 0 birakilmali.
+//  Normal akis su:
+//
+//    BAĞLAN  ->  SAHNEYİ VER  ->  SAHNEYİ OKU  ->  HAZIRLA / VER
+//
+//  ELLE neden onerilen: C ekrani 24 saat yayinda. Yayin sirasinda ag
+//  kopup baglanti yeniden kurulursa sahnenin kendiliginden yeniden
+//  yuklenmesi ekrandaki grafigi sifirlar - izleyici bunu gorur.
+//  Sahneyi ne zaman yukleyecegine operator karar versin.
+//
+//  BOSSA, basinda kimsenin olmadigi bir makinede mantikli: motor
+//  yeniden baslarsa sahne kendiliginden geri gelir ama yayindaki
+//  goruntuye dokunulmaz.
+//
+//  DIKKAT: sahneyi yuklemek onu TASARIM HALINE dondurur. Director
+//  id'leri degisir, yazilmis butun degerler silinir. Yuklemeden
+//  sonra SAHNEYİ OKU'ya basmak sarttir.
 //-------------------------------------------------------------
 
-OTOMATIK_YUKLE = 0
+YUKLEME = ELLE

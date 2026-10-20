@@ -34,6 +34,10 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
 
             IlSonucu sonuc = DataService.SonucBul(baglam.SecimCB, baglam.Plaka);
 
+            // Baslik grubu HER ZAMAN acik: sehir adi bunun icinde duruyor.
+            // Acilan sandik gizlense bile kapatilmamali.
+            komutlar.Add(SahneSurucu.YolActiveKomutu(CEkranYollari.ALT_BASLIK_GRUBU, true));
+
             SahneSurucu.SigdirEkle(komutlar, CEkranYollari.ALT_IL_KUTUSU, baglam.IlAdi,
                 CEkranYollari.ALT_IL_OLCEK, CEkranYollari.ALT_IL_HARF);
 
@@ -44,11 +48,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 sonuc == null ? 0 : sonuc.AcilanSandik,
                 CEkranSecenekleri.AcilanSandikGoster);
 
-            // Kutunun kendisi de aciliyor/kapaniyor: sahne bu bayraklari
-            // onceki yayindan kalma halleriyle teslim edilmis, operatorun
-            // isaretiyle tutmuyorlardi.
-            komutlar.Add(SahneSurucu.YolActiveKomutu(CEkranYollari.AltAssGrubu(SAYFA),
-                CEkranSecenekleri.AcilanSandikGoster));
+            AssKutulari(komutlar, SAYFA);
 
             for (int sira = 1; sira <= SATIR; sira++)
             {
@@ -58,7 +58,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 Oy oy = dolu ? oylar[sira - 1] : null;
 
                 komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.AltAd(SAYFA, sira),
-                    dolu ? SahneSurucu.VeriMetni(DataService.OyAdi(baglam.SecimCB, oy.Kod)) : ""));
+                    dolu ? SahneSurucu.AdMetni(DataService.OyAdi(baglam.SecimCB, oy.Kod)) : ""));
 
                 SahneSurucu.OranKomutlari(komutlar,
                     CEkranAdlari.AltOran(SAYFA, sira, 1),
@@ -73,6 +73,24 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Acilan sandik kutularini acar / kapatir.
+        ///
+        /// Sahne bu bayraklari onceki yayindan kalma halleriyle teslim
+        /// edilmis; operatorun isaretiyle tutmuyorlardi, o yuzden her
+        /// sayfada aciktan ayarlaniyor.
+        ///
+        /// SEHIR ADI BU KUTULARIN DISINDA BIRAKILDI: sayfa 1'de il adi
+        /// acilan sandikla ayni grubun icinde duruyor, grubun tamami
+        /// kapatilinca sehir adi da kayboluyordu.
+        /// </summary>
+        internal static void AssKutulari(List<string> komutlar, int sayfa)
+        {
+            foreach (string yol in CEkranYollari.AltAssGizlenecekler(sayfa))
+                komutlar.Add(SahneSurucu.YolActiveKomutu(
+                    yol, CEkranSecenekleri.AcilanSandikGoster));
         }
     }
 
@@ -113,11 +131,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 sonuc == null ? 0 : sonuc.AcilanSandik,
                 CEkranSecenekleri.AcilanSandikGoster);
 
-            // Kutunun kendisi de aciliyor/kapaniyor: sahne bu bayraklari
-            // onceki yayindan kalma halleriyle teslim edilmis, operatorun
-            // isaretiyle tutmuyorlardi.
-            komutlar.Add(SahneSurucu.YolActiveKomutu(CEkranYollari.AltAssGrubu(SAYFA),
-                CEkranSecenekleri.AcilanSandikGoster));
+            AltAdaylarSayfasi.AssKutulari(komutlar, SAYFA);
 
             bool digerVar = CEkranSecenekleri.UstDigerSatiri;
             int  partiSatiri = digerVar ? SATIR - 1 : SATIR;
@@ -129,7 +143,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 Oy oy = dolu ? oylar[sira - 1] : null;
 
                 komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.AltAd(SAYFA, sira),
-                    dolu ? SahneSurucu.VeriMetni(DataService.OyAdi(baglam.SecimMV, oy.Kod)) : ""));
+                    dolu ? SahneSurucu.AdMetni(DataService.OyAdi(baglam.SecimMV, oy.Kod)) : ""));
 
                 SahneSurucu.OranKomutlari(komutlar,
                     CEkranAdlari.AltOran(SAYFA, sira, 1),
@@ -151,7 +165,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
             if (diger < 0) diger = 0;
 
             komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.AltAd(SAYFA, SATIR),
-                SahneSurucu.VeriMetni("DİĞER")));
+                SahneSurucu.AdMetni("DİĞER")));
 
             SahneSurucu.OranKomutlari(komutlar,
                 CEkranAdlari.AltOran(SAYFA, SATIR, 1),

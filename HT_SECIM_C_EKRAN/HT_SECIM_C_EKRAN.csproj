@@ -69,6 +69,7 @@
     <Compile Include="Core\SahneAyarlari.cs" />
     <Compile Include="Core\SahneIndeksi.cs" />
     <Compile Include="Core\SahneSurucu.cs" />
+    <Compile Include="Core\Tema.cs" />
     <Compile Include="Core\VizClient.cs" />
     <Compile Include="Core\VeriKaynagi.cs" />
     <Compile Include="Core\VizEngine.cs" />

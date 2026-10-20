@@ -82,7 +82,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 Oy oy = dolu ? oylar[indeks] : null;
 
                 komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.SolAd(duzen, sayfa, aday),
-                    dolu ? SahneSurucu.VeriMetni(DataService.OyAdi(baglam.SecimCB, oy.Kod)) : ""));
+                    dolu ? SahneSurucu.AdMetni(DataService.OyAdi(baglam.SecimCB, oy.Kod)) : ""));
 
                 SahneSurucu.OranKomutlari(komutlar,
                     CEkranAdlari.SolOran(duzen, sayfa, aday, 1),
@@ -92,7 +92,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 // Alinan oy kutusu yalnizca SOL_1 duzeninde var.
                 if (duzen == 1)
                     komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.SolAlinanOy(duzen, sayfa, aday),
-                        dolu ? SahneSurucu.VeriMetni(CEkranAdlari.OySayisi(oy.OySayisi)) : ""));
+                        dolu ? SahneSurucu.SayiMetni(CEkranAdlari.OySayisi(oy.OySayisi)) : ""));
 
                 FotoYaz(surucu, komutlar, aday, dolu ? oy.Kod : null);
                 PlakaYaz(surucu, komutlar, aday, dolu ? oy.Kod : null);
@@ -101,17 +101,6 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
             return true;
         }
 
-        /// <summary>
-        /// Aday fotografi.
-        ///
-        /// Sahnede 2023 adaylarinin fotograflari gomulu duruyor; veriden
-        /// gelen aday degisince fotograf da degismeli, yoksa isim bir
-        /// adaya fotograf baskasina ait olur. Gorsel yolu UUID'ye
-        /// cevriliyor: havuzda ayni isim birden fazla klasorde geciyor.
-        ///
-        /// Adayin vizImage'i tanimli degilse container'a DOKUNULMUYOR -
-        /// sahnedeki fotograf kalir, bos kutu gorunmez.
-        /// </summary>
         /// <summary>
         /// Adin altindaki renkli plaka.
         ///
@@ -132,6 +121,17 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
             if (komut != null) komutlar.Add(komut);
         }
 
+        /// <summary>
+        /// Aday fotografi.
+        ///
+        /// Sahnede 2023 adaylarinin fotograflari gomulu duruyor; veriden
+        /// gelen aday degisince fotograf da degismeli, yoksa isim bir
+        /// adaya fotograf baskasina ait olur. Gorsel yolu UUID'ye
+        /// cevriliyor: havuzda ayni isim birden fazla klasorde geciyor.
+        ///
+        /// Adayin vizImage'i tanimli degilse container'a DOKUNULMUYOR -
+        /// sahnedeki fotograf kalir, bos kutu gorunmez.
+        /// </summary>
         private void FotoYaz(SahneSurucu surucu, List<string> komutlar, int aday, string kod)
         {
             if (kod == null) return;

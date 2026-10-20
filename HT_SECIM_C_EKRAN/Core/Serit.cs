@@ -214,6 +214,16 @@ namespace HT_SECIM_C_EKRAN.Core
         /// </summary>
         private void SonrakiSayfa()
         {
+            // Sayfa listesi DONERKEN bosalabiliyor: operator seridin AKTİF
+            // kutusunu kapatinca liste yeniden kuruluyor ve bos kaliyor.
+            // Korumasiz birakilirsa asagidaki sayfalar[sira] patliyor.
+            if (sayfalar.Count == 0)
+            {
+                zamanlayici.Stop();
+                CLog.Log("SERIT DURDU", ad + " - sayfa listesi bosaldi");
+                return;
+            }
+
             for (int deneme = 0; deneme < ATLAMA_SINIRI; deneme++)
             {
                 sira++;

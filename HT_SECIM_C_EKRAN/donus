@@ -117,17 +117,46 @@ CIFT_HANE = 0
 ACILAN_SANDIK = 1
 
 //-------------------------------------------------------------
-//  YASAK_MODU
+//  YASAK_MODU  -  secim yasaginin ekrana yansimasi
 //
-//  Secim yasagi suresince aday ve parti adlari ile butun oranlar
-//  BOS birakilir; sahne ekranda kalir ama sayi gostermez.
-//  Acilan sandik orani yukaridaki ayri secenekle yonetilir.
+//    YOK       : yasak yok, her sey gorunur.
+//    ORANLAR   : SAYILAR gider, ISIMLER kalir. Oranlar, vekil
+//                sayilari ve alinan oy bosaltilir; aday ve parti
+//                adlari, il adi, ittifak adlari ekranda durur.
+//    HER_SEY   : isimler de sayilar da bosaltilir.
+//
+//  ORANLAR duzeyinde katilim orani da gorunmeye devam eder;
+//  katilim bir sonuc degil. HER_SEY'de o da gider.
+//  Acilan sandik orani her iki duzeyde de yukaridaki ayri
+//  secenekle yonetilir.
 //
 //  Uygulama bu satiri son_ayar'a YAZMAZ: yasak bir gunluk bir
 //  durumdur, ertesi gun kendiliginden geri gelmesi istenmez.
 //-------------------------------------------------------------
 
-YASAK_MODU = 0
+YASAK_MODU = YOK
+
+//-------------------------------------------------------------
+//  BAGLANTI
+//
+//  OTOMATIK_BAGLAN (AC) : uygulama acilir acilmaz listedeki secili
+//                         engine'e baglanir ve baglanti koparsa
+//                         yeniden dener.
+//
+//  NABIZ (HB)           : baglanti belirli araliklarla yoklanir.
+//                         TCP baglantisi karsi taraf sessizce
+//                         olduğunde "bagli" gorunmeye devam
+//                         edebiliyor; soket acik ama motor cevap
+//                         vermiyorsa uygulama komut gonderdigini
+//                         sanip ekrani dondurur. Kucuk bir sorgu
+//                         bunu ortaya cikarir ve baglanti tazelenir.
+//
+//  Yayin makinesinde IKISI DE ACIK olmali.
+//-------------------------------------------------------------
+
+OTOMATIK_BAGLAN = 1
+NABIZ           = 1
+NABIZ_ARALIK    = 10
 
 //  Hangi secim veri setleri kullanilacak. Bos birakilirsa arayuzdeki
 //  listelerden secilir; API'deki en yeni CB ve MV secimi one gelir.

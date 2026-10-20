@@ -277,12 +277,24 @@ namespace HT_SECIM_C_EKRAN.Core
         }
 
         /// <summary>
-        /// Aday / parti / ittifak adi gibi SONUC bilgisi.
-        /// Secim yasagi suresince bos doner.
+        /// Aday / parti / ittifak adi gibi METIN bilgisi.
+        ///
+        /// Yalnizca "her seyi gizle" duzeyinde bosaltiliyor. Yasagin
+        /// yaygin kullanimi tabloyu ekranda tutup sayilari kaldirmak;
+        /// o durumda adlar yerinde kaliyor.
         /// </summary>
-        public static string VeriMetni(string deger)
+        public static string AdMetni(string deger)
         {
-            return CEkranSecenekleri.YasakModu ? "" : (deger ?? "");
+            return CEkranSecenekleri.AdlarGizli ? "" : (deger ?? "");
+        }
+
+        /// <summary>
+        /// Vekil sayisi, alinan oy gibi SAYI bilgisi.
+        /// Yasagin her iki duzeyinde de bosaltiliyor - sonuc sayisidir.
+        /// </summary>
+        public static string SayiMetni(string deger)
+        {
+            return CEkranSecenekleri.SayilarGizli ? "" : (deger ?? "");
         }
 
         /// <summary>
@@ -296,7 +308,7 @@ namespace HT_SECIM_C_EKRAN.Core
         public static void OranKomutlari(List<string> komutlar, string tamContainer,
                                          string ondalikContainer, int oranX100)
         {
-            if (CEkranSecenekleri.YasakModu)
+            if (CEkranSecenekleri.SayilarGizli)
             {
                 komutlar.Add(MetinKomutu(tamContainer, ""));
                 komutlar.Add(MetinKomutu(ondalikContainer, ""));

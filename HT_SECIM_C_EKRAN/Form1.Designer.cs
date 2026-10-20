@@ -86,6 +86,13 @@
             this.btn_baglan = new System.Windows.Forms.Button();
             this.lbl_durum = new System.Windows.Forms.Label();
             this.btn_oku = new System.Windows.Forms.Button();
+            this.btn_sahneVer = new System.Windows.Forms.Button();
+            this.chk_ac = new System.Windows.Forms.CheckBox();
+            this.chk_hb = new System.Windows.Forms.CheckBox();
+            this.lbl_yasak = new System.Windows.Forms.Label();
+            this.rad_yasakYok = new System.Windows.Forms.RadioButton();
+            this.rad_yasakOran = new System.Windows.Forms.RadioButton();
+            this.rad_yasakHepsi = new System.Windows.Forms.RadioButton();
             this.lbl_indeks = new System.Windows.Forms.Label();
             this.lbl_sahne = new System.Windows.Forms.Label();
 
@@ -97,7 +104,6 @@
             this.lbl_veri = new System.Windows.Forms.Label();
 
             this.grp_yayinSecenek = new System.Windows.Forms.GroupBox();
-            this.chk_yasak = new System.Windows.Forms.CheckBox();
             this.chk_acilanSandik = new System.Windows.Forms.CheckBox();
 
             this.grp_durum = new System.Windows.Forms.GroupBox();
@@ -607,13 +613,16 @@
             this.grp_baglanti.Controls.Add(this.lbl_sahne);
             this.grp_baglanti.Controls.Add(this.lbl_indeks);
             this.grp_baglanti.Controls.Add(this.btn_oku);
+            this.grp_baglanti.Controls.Add(this.btn_sahneVer);
+            this.grp_baglanti.Controls.Add(this.chk_hb);
+            this.grp_baglanti.Controls.Add(this.chk_ac);
             this.grp_baglanti.Controls.Add(this.lbl_durum);
             this.grp_baglanti.Controls.Add(this.btn_baglan);
             this.grp_baglanti.Controls.Add(this.cmb_engine);
             this.grp_baglanti.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.grp_baglanti.Location = new System.Drawing.Point(10, 8);
             this.grp_baglanti.Name = "grp_baglanti";
-            this.grp_baglanti.Size = new System.Drawing.Size(308, 156);
+            this.grp_baglanti.Size = new System.Drawing.Size(308, 196);
             this.grp_baglanti.TabIndex = 0;
             this.grp_baglanti.TabStop = false;
             this.grp_baglanti.Text = "VIZ ENGINE";
@@ -648,34 +657,67 @@
             this.lbl_durum.Text = "BAĞLI DEĞİL";
             this.lbl_durum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
+            // btn_sahneVer
+            //
+            this.btn_sahneVer.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btn_sahneVer.Location = new System.Drawing.Point(12, 112);
+            this.btn_sahneVer.Name = "btn_sahneVer";
+            this.btn_sahneVer.Size = new System.Drawing.Size(136, 27);
+            this.btn_sahneVer.TabIndex = 3;
+            this.btn_sahneVer.Text = "SAHNEYİ VER";
+            this.btn_sahneVer.UseVisualStyleBackColor = true;
+            //
             // btn_oku
             //
-            this.btn_oku.Location = new System.Drawing.Point(12, 88);
+            this.btn_oku.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btn_oku.Location = new System.Drawing.Point(156, 112);
             this.btn_oku.Name = "btn_oku";
-            this.btn_oku.Size = new System.Drawing.Size(168, 26);
-            this.btn_oku.TabIndex = 3;
+            this.btn_oku.Size = new System.Drawing.Size(136, 27);
+            this.btn_oku.TabIndex = 4;
             this.btn_oku.Text = "SAHNEYİ OKU";
             this.btn_oku.UseVisualStyleBackColor = true;
             //
             // lbl_indeks
             //
-            this.lbl_indeks.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lbl_indeks.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.lbl_indeks.ForeColor = System.Drawing.Color.DimGray;
-            this.lbl_indeks.Location = new System.Drawing.Point(188, 94);
+            this.lbl_indeks.Location = new System.Drawing.Point(12, 144);
             this.lbl_indeks.Name = "lbl_indeks";
-            this.lbl_indeks.Size = new System.Drawing.Size(104, 16);
-            this.lbl_indeks.TabIndex = 4;
-            this.lbl_indeks.Text = "okunmadı";
+            this.lbl_indeks.Size = new System.Drawing.Size(280, 16);
+            this.lbl_indeks.TabIndex = 5;
+            this.lbl_indeks.Text = "sahne yüklenmedi";
             //
             // lbl_sahne
             //
             this.lbl_sahne.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.lbl_sahne.ForeColor = System.Drawing.Color.DimGray;
-            this.lbl_sahne.Location = new System.Drawing.Point(12, 120);
+            this.lbl_sahne.Location = new System.Drawing.Point(12, 164);
             this.lbl_sahne.Name = "lbl_sahne";
-            this.lbl_sahne.Size = new System.Drawing.Size(280, 30);
-            this.lbl_sahne.TabIndex = 5;
+            this.lbl_sahne.Size = new System.Drawing.Size(280, 26);
+            this.lbl_sahne.TabIndex = 6;
             this.lbl_sahne.Text = "sahne";
+            // 
+            // chk_ac
+            // 
+            this.chk_ac.AutoSize = true;
+            this.chk_ac.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.chk_ac.Location = new System.Drawing.Point(14, 86);
+            this.chk_ac.Name = "chk_ac";
+            this.chk_ac.Size = new System.Drawing.Size(130, 19);
+            this.chk_ac.TabIndex = 3;
+            this.chk_ac.Text = "AC  otomatik bağlan";
+            this.chk_ac.UseVisualStyleBackColor = true;
+            // 
+            // chk_hb
+            // 
+            this.chk_hb.AutoSize = true;
+            this.chk_hb.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.chk_hb.Location = new System.Drawing.Point(164, 86);
+            this.chk_hb.Name = "chk_hb";
+            this.chk_hb.Size = new System.Drawing.Size(128, 19);
+            this.chk_hb.TabIndex = 4;
+            this.chk_hb.Text = "HB  nabız";
+            this.chk_hb.UseVisualStyleBackColor = true;
             //
             // grp_secimKutu
             //
@@ -685,7 +727,7 @@
             this.grp_secimKutu.Controls.Add(this.cmb_cb);
             this.grp_secimKutu.Controls.Add(this.lbl_cb);
             this.grp_secimKutu.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grp_secimKutu.Location = new System.Drawing.Point(10, 172);
+            this.grp_secimKutu.Location = new System.Drawing.Point(10, 212);
             this.grp_secimKutu.Name = "grp_secimKutu";
             this.grp_secimKutu.Size = new System.Drawing.Size(308, 128);
             this.grp_secimKutu.TabIndex = 1;
@@ -744,34 +786,70 @@
             // grp_yayinSecenek
             //
             this.grp_yayinSecenek.Controls.Add(this.chk_acilanSandik);
-            this.grp_yayinSecenek.Controls.Add(this.chk_yasak);
+            this.grp_yayinSecenek.Controls.Add(this.rad_yasakHepsi);
+            this.grp_yayinSecenek.Controls.Add(this.rad_yasakOran);
+            this.grp_yayinSecenek.Controls.Add(this.rad_yasakYok);
+            this.grp_yayinSecenek.Controls.Add(this.lbl_yasak);
             this.grp_yayinSecenek.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grp_yayinSecenek.Location = new System.Drawing.Point(10, 308);
+            this.grp_yayinSecenek.Location = new System.Drawing.Point(10, 348);
             this.grp_yayinSecenek.Name = "grp_yayinSecenek";
-            this.grp_yayinSecenek.Size = new System.Drawing.Size(308, 86);
+            this.grp_yayinSecenek.Size = new System.Drawing.Size(308, 130);
             this.grp_yayinSecenek.TabIndex = 2;
             this.grp_yayinSecenek.TabStop = false;
             this.grp_yayinSecenek.Text = "YAYIN";
             //
-            // chk_yasak
+            // lbl_yasak
             //
-            this.chk_yasak.AutoSize = true;
-            this.chk_yasak.ForeColor = System.Drawing.Color.FromArgb(176, 48, 44);
-            this.chk_yasak.Location = new System.Drawing.Point(14, 24);
-            this.chk_yasak.Name = "chk_yasak";
-            this.chk_yasak.Size = new System.Drawing.Size(260, 19);
-            this.chk_yasak.TabIndex = 0;
-            this.chk_yasak.Text = "YASAK MODU  —  adayları ve oranları gizle";
-            this.chk_yasak.UseVisualStyleBackColor = true;
+            this.lbl_yasak.AutoSize = true;
+            this.lbl_yasak.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lbl_yasak.ForeColor = System.Drawing.Color.FromArgb(176, 48, 44);
+            this.lbl_yasak.Location = new System.Drawing.Point(12, 22);
+            this.lbl_yasak.Name = "lbl_yasak";
+            this.lbl_yasak.Size = new System.Drawing.Size(120, 15);
+            this.lbl_yasak.TabIndex = 0;
+            this.lbl_yasak.Text = "SEÇİM YASAĞI";
+            //
+            // rad_yasakYok
+            //
+            this.rad_yasakYok.AutoSize = true;
+            this.rad_yasakYok.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.rad_yasakYok.Location = new System.Drawing.Point(14, 42);
+            this.rad_yasakYok.Name = "rad_yasakYok";
+            this.rad_yasakYok.Size = new System.Drawing.Size(120, 19);
+            this.rad_yasakYok.TabIndex = 1;
+            this.rad_yasakYok.Text = "Yasak yok";
+            this.rad_yasakYok.UseVisualStyleBackColor = true;
+            //
+            // rad_yasakOran
+            //
+            this.rad_yasakOran.AutoSize = true;
+            this.rad_yasakOran.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.rad_yasakOran.Location = new System.Drawing.Point(14, 64);
+            this.rad_yasakOran.Name = "rad_yasakOran";
+            this.rad_yasakOran.Size = new System.Drawing.Size(280, 19);
+            this.rad_yasakOran.TabIndex = 2;
+            this.rad_yasakOran.Text = "Sayıları gizle  —  isimler ekranda kalsın";
+            this.rad_yasakOran.UseVisualStyleBackColor = true;
+            //
+            // rad_yasakHepsi
+            //
+            this.rad_yasakHepsi.AutoSize = true;
+            this.rad_yasakHepsi.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.rad_yasakHepsi.Location = new System.Drawing.Point(14, 86);
+            this.rad_yasakHepsi.Name = "rad_yasakHepsi";
+            this.rad_yasakHepsi.Size = new System.Drawing.Size(280, 19);
+            this.rad_yasakHepsi.TabIndex = 3;
+            this.rad_yasakHepsi.Text = "Her şeyi gizle  —  isimler de gitsin";
+            this.rad_yasakHepsi.UseVisualStyleBackColor = true;
             //
             // chk_acilanSandik
             //
             this.chk_acilanSandik.AutoSize = true;
             this.chk_acilanSandik.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.chk_acilanSandik.Location = new System.Drawing.Point(14, 52);
+            this.chk_acilanSandik.Location = new System.Drawing.Point(14, 108);
             this.chk_acilanSandik.Name = "chk_acilanSandik";
             this.chk_acilanSandik.Size = new System.Drawing.Size(200, 19);
-            this.chk_acilanSandik.TabIndex = 1;
+            this.chk_acilanSandik.TabIndex = 4;
             this.chk_acilanSandik.Text = "Açılan sandık oranı (ALT / SOL)";
             this.chk_acilanSandik.UseVisualStyleBackColor = true;
             //
@@ -784,7 +862,7 @@
             this.grp_durum.Controls.Add(this.lbl_ustDurum);
             this.grp_durum.Controls.Add(this.lbl_altDurum);
             this.grp_durum.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grp_durum.Location = new System.Drawing.Point(10, 402);
+            this.grp_durum.Location = new System.Drawing.Point(10, 486);
             this.grp_durum.Name = "grp_durum";
             this.grp_durum.Size = new System.Drawing.Size(308, 122);
             this.grp_durum.TabIndex = 3;
@@ -908,7 +986,7 @@
             this.pnl_yayin.Controls.Add(this.btn_ver);
             this.pnl_yayin.Controls.Add(this.btn_hazirla);
             this.pnl_yayin.Controls.Add(this.lbl_onair);
-            this.pnl_yayin.Location = new System.Drawing.Point(10, 532);
+            this.pnl_yayin.Location = new System.Drawing.Point(10, 614);
             this.pnl_yayin.Name = "pnl_yayin";
             this.pnl_yayin.Size = new System.Drawing.Size(308, 150);
             this.pnl_yayin.TabIndex = 4;
@@ -998,7 +1076,7 @@
             this.lst_log.ItemHeight = 13;
             this.lst_log.Location = new System.Drawing.Point(0, 740);
             this.lst_log.Name = "lst_log";
-            this.lst_log.Size = new System.Drawing.Size(1500, 160);
+            this.lst_log.Size = new System.Drawing.Size(1500, 128);
             this.lst_log.TabIndex = 3;
             //
             // Form1
@@ -1106,6 +1184,7 @@
         private System.Windows.Forms.Button btn_baglan;
         private System.Windows.Forms.Label lbl_durum;
         private System.Windows.Forms.Button btn_oku;
+        private System.Windows.Forms.Button btn_sahneVer;
         private System.Windows.Forms.Label lbl_indeks;
         private System.Windows.Forms.Label lbl_sahne;
 
@@ -1117,7 +1196,12 @@
         private System.Windows.Forms.Label lbl_veri;
 
         private System.Windows.Forms.GroupBox grp_yayinSecenek;
-        private System.Windows.Forms.CheckBox chk_yasak;
+        private System.Windows.Forms.CheckBox chk_ac;
+        private System.Windows.Forms.CheckBox chk_hb;
+        private System.Windows.Forms.Label lbl_yasak;
+        private System.Windows.Forms.RadioButton rad_yasakYok;
+        private System.Windows.Forms.RadioButton rad_yasakOran;
+        private System.Windows.Forms.RadioButton rad_yasakHepsi;
         private System.Windows.Forms.CheckBox chk_acilanSandik;
 
         private System.Windows.Forms.GroupBox grp_durum;

@@ -47,6 +47,28 @@ namespace HT_SECIM_C_EKRAN.Core
         Yok
     }
 
+/// <summary>
+    /// Secim yasaginin ekrana yansimasi.
+    ///
+    /// Yasak suresince sonuc yayimlanamaz, ama isimlerin de kaybolmasi her
+    /// zaman istenmiyor: bazen tablo dursun sayilar gitsin yeterli oluyor.
+    /// </summary>
+    public enum YasakDuzeyi
+    {
+        /// <summary> Yasak yok, her sey gorunur. </summary>
+        Yok,
+
+        /// <summary>
+        /// Isimler kalir, SAYILAR gider: oranlar, vekil sayilari ve
+        /// alinan oy bosaltilir. Aday ve parti adlari, il adi, ittifak
+        /// adlari ekranda durur.
+        /// </summary>
+        Oranlar,
+
+        /// <summary> Isimler de sayilar da bosaltilir. </summary>
+        HerSey
+    }
+
     /// <summary> SOL seridinde kac aday, hangi duzende. </summary>
     public enum SolModu
     {
@@ -141,7 +163,16 @@ namespace HT_SECIM_C_EKRAN.Core
         /// sandik orani ayri bir secenekle yonetiliyor, cunku yasak
         /// sirasinda genellikle o gosterilebiliyor.
         /// </summary>
-        public static bool YasakModu;
+public static YasakDuzeyi Yasak;
+
+        /// <summary> Yasak modu acik mi (hangi duzeyde olursa olsun). </summary>
+        public static bool YasakVar { get { return Yasak != YasakDuzeyi.Yok; } }
+
+        /// <summary> Sayilar (oran, vekil, alinan oy) gizlensin mi. </summary>
+        public static bool SayilarGizli { get { return Yasak != YasakDuzeyi.Yok; } }
+
+        /// <summary> Isimler gizlensin mi. </summary>
+        public static bool AdlarGizli { get { return Yasak == YasakDuzeyi.HerSey; } }
 
         /// <summary> Acilan sandik orani yazilsin mi. </summary>
         public static bool AcilanSandikGoster;
@@ -151,6 +182,15 @@ namespace HT_SECIM_C_EKRAN.Core
 
         public static string SecimCB;
         public static string SecimMV;
+
+        /// <summary> Uygulama acilir acilmaz engine'e baglanilsin mi (AC). </summary>
+        public static bool OtomatikBaglan;
+
+        /// <summary> Baglantiyi belirli araliklarla yoklayalim mi (HB). </summary>
+        public static bool Nabiz;
+
+        /// <summary> Nabiz yoklamasinin araligi, saniye. </summary>
+        public static int NabizAralik;
 
         /// <summary> Baglanti kurulup sahne okunur okunmaz donus baslasin mi. </summary>
         public static bool OtomatikBasla;
@@ -175,7 +215,7 @@ namespace HT_SECIM_C_EKRAN.Core
                 "UST " + UstSure1 + "/" + UstSure2 + "sn " + UstMod +
                 " / SOL " + Sol + " " + SolSure1 + "/" + SolSure2 + "sn" +
                 " / ALT " + AltSure + "sn" +
-                (YasakModu ? " / YASAK MODU" : ""));
+                (YasakVar ? " / YASAK: " + Yasak : ""));
         }
 
         private static void Varsayilanlar()
@@ -201,7 +241,10 @@ namespace HT_SECIM_C_EKRAN.Core
             AltAktif = true;
             AltSure  = 5;
 
-            YasakModu          = false;
+Yasak              = YasakDuzeyi.Yok;
+            OtomatikBaglan     = false;
+            Nabiz              = false;
+            NabizAralik        = 10;
             AcilanSandikGoster = true;
             KaynakAd           = "";
             SecimCB            = "";
@@ -242,7 +285,10 @@ namespace HT_SECIM_C_EKRAN.Core
                     case "ALT_AKTIF": AltAktif = Bayrak(deger); break;
                     case "ALT_SURE":  AltSure  = Sure(deger, AltSure); break;
 
-                    case "YASAK_MODU":     YasakModu          = Bayrak(deger); break;
+case "YASAK_MODU":     Yasak              = YasakCoz(deger); break;
+                    case "OTOMATIK_BAGLAN": OtomatikBaglan    = Bayrak(deger); break;
+                    case "NABIZ":          Nabiz              = Bayrak(deger); break;
+                    case "NABIZ_ARALIK":   NabizAralik        = Aralik(deger, NabizAralik); break;
                     case "ACILAN_SANDIK":  AcilanSandikGoster = Bayrak(deger); break;
                     case "KAYNAK_AD":      KaynakAd           = deger; break;
                     case "SECIM_CB":       SecimCB            = deger; break;
@@ -294,7 +340,9 @@ namespace HT_SECIM_C_EKRAN.Core
                 sb.AppendLine("ALT_SURE  = " + AltSure);
                 sb.AppendLine();
 
-                sb.AppendLine("ACILAN_SANDIK = " + Bayrak(AcilanSandikGoster));
+sb.AppendLine("ACILAN_SANDIK   = " + Bayrak(AcilanSandikGoster));
+                sb.AppendLine("OTOMATIK_BAGLAN = " + Bayrak(OtomatikBaglan));
+                sb.AppendLine("NABIZ           = " + Bayrak(Nabiz));
                 sb.AppendLine("KAYNAK_AD     = " + KaynakAd);
                 sb.AppendLine("SECIM_CB      = " + SecimCB);
                 sb.AppendLine("SECIM_MV      = " + SecimMV);
@@ -352,6 +400,29 @@ namespace HT_SECIM_C_EKRAN.Core
             return deger.ToUpperInvariant().StartsWith("MV", StringComparison.Ordinal)
                 ? UstGosterim.MvVeOran
                 : UstGosterim.OyOrani;
+        }
+
+/// <summary>
+        /// Taninmayan deger YOK'a duser: yazim hatasi yuzunden ekranin
+        /// bosalmasindansa normal calismasi tercih edilir. Yasagi operator
+        /// zaten arayuzden aciyor.
+        /// </summary>
+        private static YasakDuzeyi YasakCoz(string deger)
+        {
+            switch (deger.ToUpperInvariant())
+            {
+                case "ORANLAR": return YasakDuzeyi.Oranlar;
+                case "HER_SEY": case "1": return YasakDuzeyi.HerSey;
+                default: return YasakDuzeyi.Yok;
+            }
+        }
+
+        /// <summary> Nabiz araligi. 3 saniyenin altina inilmiyor. </summary>
+        private static int Aralik(string deger, int eski)
+        {
+            int sn;
+            if (!int.TryParse(deger, NumberStyles.Integer, CultureInfo.InvariantCulture, out sn)) return eski;
+            return sn < 3 ? 3 : sn;
         }
 
         private static UstBaslikKutusu UstBaslikCoz(string deger)

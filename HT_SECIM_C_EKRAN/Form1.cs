@@ -43,6 +43,7 @@ namespace HT_SECIM_C_EKRAN
         public Form1()
         {
             InitializeComponent();
+            TemayiUygula();
 
             sahne = new SahneSurucu(engine);
             motor = new DonusMotoru(sahne);
@@ -84,12 +85,19 @@ namespace HT_SECIM_C_EKRAN
             lbl_sahne.Text = SahneAyarlari.Layer + "\n" + SahneAyarlari.SahneYolu;
 
             VeriKaynaginiKur();
+            NabziKur();
             DurumuTazele();
+
+            // AC isaretliyse ilk nabiz tikini beklemeden baglaniliyor.
+            if (CEkranSecenekleri.OtomatikBaglan) OtomatikBaglan();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             logZamanlayici.Stop();
+            nabizCalisiyor = false;
+            if (nabizZamanlayici != null) nabizZamanlayici.Dispose();
+
             VeriKaynagi.Durdur();
 
             // Seritler ekrandan aliniyor; yoksa sahnede son sayfa donmus
@@ -104,10 +112,29 @@ namespace HT_SECIM_C_EKRAN
             CLog.Kapat();
         }
 
+        /// <summary>
+        /// Renkler Tema'dan geliyor. Yerlesim Designer'da; burada yalnizca
+        /// boya. VER / AL / HAZIRLA anlamli renkte, geri kalan dugmeler
+        /// sade.
+        /// </summary>
+        private void TemayiUygula()
+        {
+            Tema.Uygula(this);
+
+            Tema.RenkliDugme(btn_ver,     Tema.Yesil,   Color.White);
+            Tema.RenkliDugme(btn_al,      Tema.Kirmizi, Color.White);
+            Tema.RenkliDugme(btn_hazirla, Tema.Sari,    Tema.Metin);
+
+            lbl_yasak.ForeColor = Tema.Kirmizi;
+            lbl_onair.BackColor = Tema.Notr;
+            pnl_yayin.BackColor = Tema.Zemin;
+        }
+
         private void OlaylariBagla()
         {
-            btn_baglan.Click += Baglan_Click;
-            btn_oku.Click    += Oku_Click;
+            btn_baglan.Click   += Baglan_Click;
+            btn_sahneVer.Click += SahneVer_Click;
+            btn_oku.Click      += Oku_Click;
 
             btn_hazirla.Click += delegate { motor.Hazirla(); DurumuTazele(); };
             btn_ver.Click     += Ver_Click;
@@ -160,7 +187,9 @@ namespace HT_SECIM_C_EKRAN
             chk_altAktif.CheckedChanged += degisti;
             num_altSure.ValueChanged    += degisti;
 
-            chk_yasak.CheckedChanged        += Yasak_Degisti;
+            rad_yasakYok.CheckedChanged     += Yasak_Degisti;
+            rad_yasakOran.CheckedChanged    += Yasak_Degisti;
+            rad_yasakHepsi.CheckedChanged   += Yasak_Degisti;
             chk_acilanSandik.CheckedChanged += Yasak_Degisti;
 
             cmb_cb.SelectedIndexChanged += Secim_Degisti;
@@ -215,7 +244,12 @@ namespace HT_SECIM_C_EKRAN
                 chk_altAktif.Checked = CEkranSecenekleri.AltAktif;
                 num_altSure.Value    = CEkranSecenekleri.AltSure;
 
-                chk_yasak.Checked        = CEkranSecenekleri.YasakModu;
+                rad_yasakYok.Checked   = (CEkranSecenekleri.Yasak == YasakDuzeyi.Yok);
+                rad_yasakOran.Checked  = (CEkranSecenekleri.Yasak == YasakDuzeyi.Oranlar);
+                rad_yasakHepsi.Checked = (CEkranSecenekleri.Yasak == YasakDuzeyi.HerSey);
+
+                chk_ac.Checked = CEkranSecenekleri.OtomatikBaglan;
+                chk_hb.Checked = CEkranSecenekleri.Nabiz;
                 chk_acilanSandik.Checked = CEkranSecenekleri.AcilanSandikGoster;
             }
             finally
@@ -264,7 +298,12 @@ namespace HT_SECIM_C_EKRAN
             CEkranSecenekleri.AltAktif = chk_altAktif.Checked;
             CEkranSecenekleri.AltSure  = (int)num_altSure.Value;
 
-            CEkranSecenekleri.YasakModu          = chk_yasak.Checked;
+            if (rad_yasakHepsi.Checked)     CEkranSecenekleri.Yasak = YasakDuzeyi.HerSey;
+            else if (rad_yasakOran.Checked) CEkranSecenekleri.Yasak = YasakDuzeyi.Oranlar;
+            else                            CEkranSecenekleri.Yasak = YasakDuzeyi.Yok;
+
+            CEkranSecenekleri.OtomatikBaglan = chk_ac.Checked;
+            CEkranSecenekleri.Nabiz          = chk_hb.Checked;
             CEkranSecenekleri.AcilanSandikGoster = chk_acilanSandik.Checked;
 
             Secim cb = cmb_cb.SelectedItem as Secim;
@@ -304,8 +343,7 @@ namespace HT_SECIM_C_EKRAN
 
             KutulardanOku();
 
-            if (chk_yasak.Checked) CLog.Log("YASAK MODU", "AÇIK - adaylar ve oranlar gizleniyor");
-            else                   CLog.Log("YASAK MODU", "kapalı");
+            CLog.Log("YASAK MODU", CEkranSecenekleri.Yasak.ToString());
 
             foreach (Serit s in motor.Seritler) s.Tazele();
 
@@ -420,6 +458,10 @@ namespace HT_SECIM_C_EKRAN
             }
 
             pnl_iller.Controls.Add(tablo);
+
+            // Kutular calisma aninda olustu; form acilirken uygulanan
+            // tema onlara ulasmadi.
+            Tema.Uygula(tablo);
         }
 
         /// <summary>
@@ -608,6 +650,102 @@ namespace HT_SECIM_C_EKRAN
 
         #endregion
 
+        #region Otomatik baglanti ve nabiz
+
+        /// <summary>
+        /// Nabiz zamanlayicisi ARKA PLANDA calisiyor.
+        ///
+        /// Yoklama komutu cevap beklediginden UI thread'inde olsaydi
+        /// baglanti koptugunda arayuz zaman asimi boyunca donardi.
+        /// </summary>
+        private System.Threading.Timer nabizZamanlayici;
+        private volatile bool nabizCalisiyor;
+
+        /// <summary> Iki tik ust uste binmesin diye. </summary>
+        private int nabizMesgul;
+
+        private void NabziKur()
+        {
+            nabizCalisiyor = true;
+
+            int ms = Math.Max(3, CEkranSecenekleri.NabizAralik) * 1000;
+
+            nabizZamanlayici = new System.Threading.Timer(
+                NabizTik, null, ms, ms);
+
+            CLog.Log("NABIZ KURULDU", CEkranSecenekleri.NabizAralik + " sn");
+        }
+
+        /// <summary>
+        /// Her tik iki is yapiyor:
+        ///
+        ///   AC acik ve bagli degilsek  -> baglanmayi dener.
+        ///   HB acik ve bagliysak       -> hatti yoklar.
+        ///
+        /// Yoklama neden gerekli: TCP baglantisi karsi taraf sessizce
+        /// olduğunde "bagli" gorunmeye devam edebiliyor. Soket acik ama
+        /// motor cevap vermiyorsa uygulama komut gonderdigini sanip
+        /// ekrani dondurur. Kucuk bir GET bunu ortaya cikariyor.
+        /// </summary>
+        private void NabizTik(object durum)
+        {
+            if (!nabizCalisiyor) return;
+
+            // Onceki tik hala surerse bu tik atlaniyor.
+            if (System.Threading.Interlocked.Exchange(ref nabizMesgul, 1) == 1) return;
+
+            try
+            {
+                if (!engine.isConnected)
+                {
+                    if (CEkranSecenekleri.OtomatikBaglan) OtomatikBaglan();
+                    return;
+                }
+
+                if (!CEkranSecenekleri.Nabiz) return;
+
+                // Yan etkisi olmayan, birkac baytlik bir sorgu.
+                if (engine.SendAndWait("VERSION GET", 4000) != null) return;
+
+                CLog.Error("NABIZ ALINAMADI", "engine cevap vermiyor, baglanti kapatiliyor");
+
+                engine.Disconnect();
+                if (CEkranSecenekleri.OtomatikBaglan) OtomatikBaglan();
+            }
+            catch (Exception ex)
+            {
+                CLog.Error("NABIZ HATASI", ex.Message);
+            }
+            finally
+            {
+                System.Threading.Interlocked.Exchange(ref nabizMesgul, 0);
+            }
+        }
+
+        /// <summary>
+        /// Listedeki secili engine'e baglanmayi dener.
+        ///
+        /// Secili engine bir alanda tutuluyor, arka plan thread'inden
+        /// ComboBox okunmuyor: SafeInvoke asenkron oldugu icin degeri
+        /// oradan almak hicbir zaman zamaninda donmezdi.
+        ///
+        /// Baglanmanin kendisi bloklamiyor; VizClient BeginConnect
+        /// kullaniyor ve 3 saniyede bir kendi de yeniden deniyor.
+        /// </summary>
+        private void OtomatikBaglan()
+        {
+            EngineInfo secili = seciliEngine;
+            if (secili == null) return;
+
+            CLog.Log("OTOMATIK BAGLANTI", secili.IP + ":" + secili.Port);
+            engine.Connect(secili);
+        }
+
+        /// <summary> Arka plandaki nabiz thread'inin okudugu secili engine. </summary>
+        private volatile EngineInfo seciliEngine;
+
+        #endregion
+
         #region Veri kaynagi
 
         /// <summary>
@@ -672,7 +810,7 @@ namespace HT_SECIM_C_EKRAN
             if (!ApiAyarlari.ApiKullan)
             {
                 lbl_veri.Text = "YEREL VERİ";
-                lbl_veri.BackColor = Color.Gray;
+                lbl_veri.BackColor = Tema.Notr;
                 return;
             }
 
@@ -681,17 +819,17 @@ namespace HT_SECIM_C_EKRAN
                 case KaynakDurumu.Bagli:
                     lbl_veri.Text = "VERİ  " + VeriKaynagi.SonGuncelleme.ToString("HH:mm") +
                                     "   (sürüm " + VeriKaynagi.SonSurum + ")";
-                    lbl_veri.BackColor = Color.FromArgb(26, 160, 74);
+                    lbl_veri.BackColor = Tema.Yesil;
                     break;
 
                 case KaynakDurumu.Kopuk:
                     lbl_veri.Text = "API YOK";
-                    lbl_veri.BackColor = Color.FromArgb(176, 48, 44);
+                    lbl_veri.BackColor = Tema.Kirmizi;
                     break;
 
                 default:
                     lbl_veri.Text = "VERİ BEKLENİYOR";
-                    lbl_veri.BackColor = Color.Gray;
+                    lbl_veri.BackColor = Tema.Notr;
                     break;
             }
         }
@@ -708,6 +846,12 @@ namespace HT_SECIM_C_EKRAN
                 cmb_engine.Items.Add(en);
 
             if (cmb_engine.Items.Count > 0) cmb_engine.SelectedIndex = 0;
+
+            seciliEngine = cmb_engine.SelectedItem as EngineInfo;
+            cmb_engine.SelectedIndexChanged += delegate
+            {
+                seciliEngine = cmb_engine.SelectedItem as EngineInfo;
+            };
         }
 
         private void Baglan_Click(object sender, EventArgs e)
@@ -735,10 +879,15 @@ namespace HT_SECIM_C_EKRAN
         }
 
         /// <summary>
-        /// Baglanti kurulunca: sahne dosyasinda istenmisse sahneyi yukler.
+        /// Baglanti kurulunca yalnizca durum yenilenir.
         ///
-        /// Yayin makinesinde OTOMATIK_YUKLE kapali olmali - sahne zaten
-        /// ekranda dururken yeniden yuklemek goruntuyu sifirlar.
+        /// Sahne KENDILIGINDEN yuklenmiyor; operator SAHNEYİ VER'e basiyor.
+        /// Yayin sirasinda ag kopup baglanti tazelendiginde sahnenin
+        /// kendiliginden yeniden yuklenmesi ekrandaki grafigi sifirlardi
+        /// ve bunu izleyici gorurdu.
+        ///
+        /// Ayar dosyasinda YUKLEME = BOSSA / HER secilirse baglanti
+        /// aninda da yuklenir; yayin makinesinde ELLE birakilmali.
         /// </summary>
         private void Engine_OnConnected(VizEngine en)
         {
@@ -746,12 +895,86 @@ namespace HT_SECIM_C_EKRAN
             {
                 DurumuTazele();
 
-                if (!SahneAyarlari.OtomatikYukle) return;
-                if (SahneAyarlari.SahneYolu.Length == 0) return;
+                if (SahneAyarlari.Yukleme == YuklemeModu.Elle) return;
 
-                CLog.Log("SAHNE YUKLENIYOR", SahneAyarlari.SahneYolu);
-                engine.Send(SahneAyarlari.YuklemeKomutu());
+                if (SahneAyarlari.Yukleme == YuklemeModu.Bossa && KatmanDolu())
+                {
+                    CLog.Log("SAHNE YUKLENMEDI", SahneAyarlari.Layer + " dolu, dokunulmadi");
+                    return;
+                }
+
+                SahneyiYukle();
             });
+        }
+
+        /// <summary>
+        /// SAHNEYİ VER: sahneyi katmana yukler.
+        ///
+        /// Yukleme sahneyi TASARIM HALINE dondurur: director id'leri
+        /// degisir, yazdigimiz butun degerler silinir. O yuzden ardindan
+        /// SAHNEYİ OKU'ya basmak sart; indeks burada gecersiz sayiliyor
+        /// ki uygulama olmayan id'lere komut gondermeye devam etmesin.
+        /// </summary>
+        private void SahneVer_Click(object sender, EventArgs e)
+        {
+            if (!engine.isConnected)
+            {
+                MessageBox.Show("Önce engine'e bağlanın.");
+                return;
+            }
+
+            if (SahneAyarlari.SahneYolu.Length == 0)
+            {
+                MessageBox.Show("sahne dosyasında SAHNE satırı boş.");
+                return;
+            }
+
+            // Donus surerken sahneyi yeniden yuklemek ekrandaki grafigi
+            // sifirlar; operator bunu bilerek yapiyor olmali.
+            if (motor.Yayinda)
+            {
+                DialogResult cevap = MessageBox.Show(
+                    "Şeritler şu anda EKRANDA.\n\n" +
+                    "Sahneyi yeniden yüklemek ekrandaki grafiği sıfırlar ve " +
+                    "dönüşü durdurur.\n\nDevam edilsin mi?",
+                    "SAHNEYİ VER", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (cevap != DialogResult.Yes) return;
+
+                motor.Al();
+            }
+
+            SahneyiYukle();
+            DurumuTazele();
+        }
+
+        private void SahneyiYukle()
+        {
+            CLog.Log("SAHNE YUKLENIYOR", SahneAyarlari.Layer + " <- " + SahneAyarlari.SahneYolu);
+            engine.Send(SahneAyarlari.YuklemeKomutu());
+
+            // Yeni yuklenen sahnede eski director id'leri gecersiz.
+            sahne.Indeks.Temizle();
+        }
+
+        /// <summary>
+        /// Katmanda sahne var mi.
+        ///
+        /// Bos katmanda "TREE GET" bos cevap donuyor. Cevap alinamazsa
+        /// (zaman asimi) katman DOLU sayiliyor: emin olamadigimizda
+        /// yayindaki bir grafigi sifirlamaktansa hic dokunmamak iyi.
+        /// </summary>
+        private bool KatmanDolu()
+        {
+            string cevap = engine.SendAndWait(SahneAyarlari.AgacKomutu(), 5000);
+
+            if (cevap == null)
+            {
+                CLog.Error("KATMAN OKUNAMADI", SahneAyarlari.Layer + " - dolu varsayildi");
+                return true;
+            }
+
+            return cevap.Trim().Length > 0;
         }
 
         private void Engine_OnDisconnected(VizEngine en)
@@ -792,11 +1015,11 @@ namespace HT_SECIM_C_EKRAN
             {
                 if (!sahne.SahneyiOku())
                 {
-                    lbl_indeks.Text = "okunamadı";
+                    MessageBox.Show(
+                        "Sahne okunamadı.\n\n" +
+                        "Katmanda sahne var mı? Önce SAHNEYİ VER'e basmayı deneyin.");
                     return;
                 }
-
-                lbl_indeks.Text = sahne.Indeks.Sayi + " director";
 
                 if (CEkranSecenekleri.OtomatikBasla && !motor.Yayinda && DataService.Yuklendi)
                 {
@@ -852,15 +1075,23 @@ namespace HT_SECIM_C_EKRAN
 
             btn_baglan.Text     = bagli ? "BAĞLANTIYI KES" : "BAĞLAN";
             lbl_durum.Text      = bagli ? "BAĞLI" : "BAĞLI DEĞİL";
-            lbl_durum.BackColor = bagli ? Color.FromArgb(26, 160, 74) : Color.FromArgb(176, 48, 44);
+            lbl_durum.BackColor = bagli ? Tema.Yesil : Tema.Kirmizi;
             cmb_engine.Enabled  = !bagli;
 
             bool yayinda = motor.Yayinda;
 
             lbl_onair.Text      = yayinda ? "EKRANDA" : "EKRANDA DEĞİL";
-            lbl_onair.BackColor = yayinda ? Color.FromArgb(176, 48, 44) : Color.DimGray;
+            lbl_onair.BackColor = yayinda ? Tema.Kirmizi : Tema.Notr;
 
-            btn_hazirla.Enabled = bagli && !yayinda;
+            // Akis: BAĞLAN -> SAHNEYİ VER -> SAHNEYİ OKU -> HAZIRLA / VER
+            btn_sahneVer.Enabled = bagli;
+            btn_oku.Enabled      = bagli;
+            btn_hazirla.Enabled  = bagli && sahne.Hazir && !yayinda;
+            btn_ver.Enabled      = bagli && sahne.Hazir;
+
+            lbl_indeks.Text = sahne.Hazir
+                ? (sahne.Indeks.Sayi + " director okundu")
+                : "sahne okunmadı — SAHNEYİ OKU'ya basın";
 
             lbl_altDurum.Text = SeritYazisi(motor.Alt);
             lbl_ustDurum.Text = SeritYazisi(motor.Ust);

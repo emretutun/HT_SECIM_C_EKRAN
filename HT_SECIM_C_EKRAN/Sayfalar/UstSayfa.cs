@@ -80,7 +80,8 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 CEkranAdlari.UstKatilim(duzen, 1),
                 CEkranAdlari.UstKatilim(duzen, 2),
                 null,
-                sonuc == null ? 0 : sonuc.Katilim, true);
+                sonuc == null ? 0 : sonuc.Katilim,
+                CEkranSecenekleri.Yasak != YasakDuzeyi.HerSey);
 
             komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.UstKaynak(duzen),
                 CEkranSecenekleri.KaynakGoster ? CEkranSecenekleri.KaynakAd : ""));
@@ -97,7 +98,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 Oy oy = dolu ? oylar[indeks] : null;
 
                 komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.UstAd(duzen, sayfa, sira),
-                    dolu ? SahneSurucu.VeriMetni(DataService.OyAdi(baglam.SecimMV, oy.Kod)) : ""));
+                    dolu ? SahneSurucu.AdMetni(DataService.OyAdi(baglam.SecimMV, oy.Kod)) : ""));
 
                 SahneSurucu.OranKomutlari(komutlar,
                     CEkranAdlari.UstOran(duzen, sayfa, sira, 1),
@@ -106,7 +107,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
 
                 if (vekilGoster)
                     komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.UstMv(duzen, sayfa, sira),
-                        dolu ? SahneSurucu.VeriMetni(oy.Vekil.ToString()) : ""));
+                        dolu ? SahneSurucu.SayiMetni(oy.Vekil.ToString()) : ""));
 
                 if (!dolu) continue;
 
@@ -197,7 +198,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
             if (diger < 0) diger = 0;
 
             komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.UstAd(duzen, sayfa, satirSayisi),
-                SahneSurucu.VeriMetni("DİĞER")));
+                SahneSurucu.AdMetni("DİĞER")));
 
             SahneSurucu.OranKomutlari(komutlar,
                 CEkranAdlari.UstOran(duzen, sayfa, satirSayisi, 1),
@@ -276,7 +277,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
                 string kod = dolu ? ittifaklar[indeks] : null;
 
                 komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.IttifakAd(duzen, sayfa, sira),
-                    dolu ? SahneSurucu.VeriMetni(DataService.IttifakAdi(kod)) : ""));
+                    dolu ? SahneSurucu.AdMetni(DataService.IttifakAdi(kod)) : ""));
 
                 SahneSurucu.OranKomutlari(komutlar,
                     CEkranAdlari.IttifakOran(duzen, sayfa, sira, 1),
@@ -285,7 +286,7 @@ namespace HT_SECIM_C_EKRAN.Sayfalar
 
                 komutlar.Add(SahneSurucu.MetinKomutu(CEkranAdlari.IttifakMv(duzen, sayfa, sira),
                     dolu
-                        ? SahneSurucu.VeriMetni(
+                        ? SahneSurucu.SayiMetni(
                             DataService.IttifakVekil(baglam.SecimMV, baglam.Plaka, kod).ToString())
                         : ""));
 
